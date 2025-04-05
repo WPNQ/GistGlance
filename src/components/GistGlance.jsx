@@ -1,33 +1,59 @@
 import React, { useState } from 'react';
+import '../styles.css';
 
 const GistGlance = () => {
   const [summary, setSummary] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedTab, setSelectedTab] = useState('highlight');
+  const [inputText, setInputText] = useState('');
 
   const processSample = () => {
+    if (!inputText && selectedTab === 'highlight') {
+      setInputText(`Quarterly Report - Q1 2025
+      
+Revenue increased by 12% compared to the same period last year, reaching $24.3 million. This growth was primarily driven by our new product line launch in January and successful expansion into Asian markets.
+
+Key Performance Indicators:
+- New customer acquisition up 18%
+- Customer retention rate at 92% (up from 88% last year)
+- Average order value increased by 7.5%
+
+Challenges faced during the quarter included ongoing supply chain disruptions in Southeast Asia and increasing raw material costs. Our operations team has implemented alternative sourcing strategies and we expect these issues to ease in Q2.
+
+R&D investment increased by 15% as we continue to develop next-generation products for the healthcare and consumer electronics sectors. Two new patents were filed during this period.
+
+Marketing expenditure was optimized with a shift toward digital channels, resulting in a 9% reduction in customer acquisition cost while maintaining growth targets.
+
+For the next fiscal year, we project continued growth of 8-10% with improved profit margins as economies of scale begin to take effect in our new markets.`);
+    }
+    
     setIsProcessing(true);
-    // Simulate API call
+    
+    // Simulate API call with 2 second delay
     setTimeout(() => {
-      setSummary("This quarterly report shows a 12% revenue increase driven by new product lines and expansion into Asian markets. Key challenges include supply chain disruptions and increasing raw material costs. The outlook remains positive with projected growth of 8-10% for the next fiscal year.");
+      if (inputText || selectedTab === 'upload') {
+        setSummary("This quarterly report shows a 12% revenue increase driven by new product lines and expansion into Asian markets. Key challenges include supply chain disruptions and increasing raw material costs. The outlook remains positive with projected growth of 8-10% for the next fiscal year.");
+      } else {
+        setSummary("No text provided to summarize. Please highlight text, paste content, or upload a document.");
+      }
       setIsProcessing(false);
-    }, 1500);
+    }, 2000);
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="app-container">
       {/* Header */}
-      <header className="bg-gray-800 text-white p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <h1 className="text-xl font-bold">GistGlance</h1>
-            <span className="ml-2 text-xs bg-blue-500 px-2 py-1 rounded">Alpha 1.01</span>
+      <header className="header">
+        <div className="header-content">
+          <div className="app-title">
+            <h1 className="title-text">GistGlance</h1>
+            <span className="version-badge">Alpha 1.01</span>
           </div>
-          <div className="flex space-x-2">
-            <button className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm">
+          <div className="header-buttons">
+            <button className="settings-button">
               Settings
             </button>
-            <button className="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm">
+            <button className="help-button">
               Help
             </button>
           </div>
@@ -35,18 +61,18 @@ const GistGlance = () => {
       </header>
       
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="main-content">
         {/* Left panel */}
-        <div className="w-1/2 p-4 flex flex-col border-r">
-          <div className="flex border-b mb-4">
+        <div className="left-panel">
+          <div className="tab-bar">
             <button 
-              className={`px-4 py-2 ${selectedTab === 'highlight' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+              className={`tab ${selectedTab === 'highlight' ? 'active' : ''}`}
               onClick={() => setSelectedTab('highlight')}
             >
               Highlight Text
             </button>
             <button 
-              className={`px-4 py-2 ${selectedTab === 'upload' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+              className={`tab ${selectedTab === 'upload' ? 'active' : ''}`}
               onClick={() => setSelectedTab('upload')}
             >
               Upload Document
@@ -54,34 +80,36 @@ const GistGlance = () => {
           </div>
           
           {selectedTab === 'highlight' ? (
-            <div className="flex-1 flex flex-col">
-              <p className="text-sm text-gray-600 mb-2">Use keyboard shortcut (Ctrl+Shift+G) to capture highlighted text from any application</p>
+            <div className="input-area">
+              <p className="helper-text">Use keyboard shortcut (Ctrl+Shift+G) to capture highlighted text from any application</p>
               <textarea 
-                className="flex-1 p-3 border rounded resize-none mb-4"
+                className="text-input"
                 placeholder="Or paste your text here..."
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
               ></textarea>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg flex-1 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="mb-4">
-                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <div className="input-area">
+              <div className="upload-area">
+                <div className="upload-content">
+                  <div style={{ marginBottom: "1rem" }}>
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
                     </svg>
                   </div>
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  <button className="upload-button">
                     Upload Document
                   </button>
-                  <p className="text-xs text-gray-500 mt-2">Supports PDF, DOCX, TXT, RTF, HTML</p>
+                  <p className="upload-info">Supports PDF, DOCX, TXT, RTF, HTML</p>
                 </div>
               </div>
             </div>
           )}
           
-          <div className="flex justify-end mt-4">
+          <div className="action-buttons">
             <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              className="primary-button"
               onClick={processSample}
               disabled={isProcessing}
             >
@@ -91,37 +119,37 @@ const GistGlance = () => {
         </div>
         
         {/* Right panel */}
-        <div className="w-1/2 p-4 flex flex-col">
-          <h2 className="text-lg font-medium mb-4">Summary</h2>
+        <div className="right-panel">
+          <h2 className="panel-title">Summary</h2>
           
           {isProcessing ? (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="loader">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-                <p className="text-gray-600">Analyzing content...</p>
+                <div className="spinner"></div>
+                <p>Analyzing content...</p>
               </div>
             </div>
           ) : summary ? (
-            <div className="flex-1 flex flex-col">
-              <div className="bg-white border rounded p-4 flex-1">
-                <p className="text-gray-800">{summary}</p>
+            <div className="summary-content">
+              <div className="summary-box">
+                <p>{summary}</p>
               </div>
-              <div className="mt-4 flex justify-between">
-                <button className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">
+              <div className="summary-actions">
+                <button className="action-button">
                   Copy to Clipboard
                 </button>
                 <div>
-                  <button className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm mr-2">
+                  <button className="action-button" style={{ marginRight: "0.5rem" }}>
                     More Detail
                   </button>
-                  <button className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">
+                  <button className="action-button">
                     Less Detail
                   </button>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-400">
+            <div className="empty-state">
               <p>Summaries will appear here</p>
             </div>
           )}
@@ -129,11 +157,11 @@ const GistGlance = () => {
       </div>
       
       {/* Status bar */}
-      <div className="bg-gray-200 p-2 text-xs text-gray-600 flex justify-between">
+      <div className="status-bar">
         <span>Ready</span>
-        <div className="flex items-center">
-          <span>Claude 3.7 Sonnet</span>
-          <span className="ml-4">By Will Payne</span>
+        <div className="author-info">
+          <span className="model-info">Claude 3.7 Sonnet</span>
+          <span>By Will Payne</span>
         </div>
       </div>
     </div>
